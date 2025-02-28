@@ -56,11 +56,13 @@ pipeline {
             }
         }
         stage('Select BEst model'){
-            echo "Selecting best model..."
-            sh '''
-            source venv/bin/activate
-            python src/model_selection.py
-            '''
+            steps{
+                echo "Selecting best model..."
+                sh '''
+                source venv/bin/activate
+                python src/model_selection.py
+                '''
+            }
         }
         stage('Build Docker Image') {
             steps {
