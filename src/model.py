@@ -35,7 +35,7 @@ class XG_Boost:
         print("Accuracy of the model:", accuracy) 
 
         # Ensure the 'models' directory exists
-        os.makedirs("../models", exist_ok=True)
+        os.makedirs("models", exist_ok=True)
 
         # Define the filename
         filename = f"models/xgb_lr_{self.learning_rate}_depth_{self.max_depth}.pkl"
