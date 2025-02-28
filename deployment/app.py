@@ -11,7 +11,7 @@ if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError("Best model not found. Run model_selection.py") 
 
 with open(MODEL_PATH, "rb") as f:
-    model_data = pickle.load() 
+    model_data = pickle.load(f)  
     model = model_data["model"] 
 
 @app.route("/") 
@@ -26,6 +26,10 @@ def home():
 def predict():
     try:
         data = request.get_json() 
+        
+        if "features" not in data:
+            return jsonify({"Error": "Missing 'features' key in request JSON"}), 400
+        
         features = np.array(data["features"]).reshape(1, -1) 
         prediction = model.predict(features)
         return jsonify(
