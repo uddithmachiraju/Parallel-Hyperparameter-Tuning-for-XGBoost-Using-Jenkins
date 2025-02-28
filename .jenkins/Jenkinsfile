@@ -1,0 +1,80 @@
+pipeline {
+    agent any 
+
+    environment {
+        PYTHON_VERSION = "3.10" 
+        DOCKER_IMAGE = "xgboost-api" 
+    }
+
+    stages {
+        stage('Checkout Code'){
+            steps {
+                echo "cloning the repository..."
+                checkout scm 
+            }
+        }
+        stage('Setup Python Environment'){
+            echo "Setting up Python Environment..."
+            sh '''
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip 
+            pip install -r config/requirements.txt
+            '''
+        }
+        stage('Parallel Hyperparameter Tunning'){
+            parallel{
+                stage('Train Model - LR = 0.02, Depth = 100'){
+                    steps{
+                        echo "Training XGBoost with LR = 0.02, Depth = 100..."
+                        sh '''
+                        source venv/bin/activate
+                        python src/model.py --lr 0.02 --depth 100
+                        '''
+                    }
+                }
+                stage('Train Model - LR = 0.002, Depth = 50'){
+                    steps{
+                        echo "Training XGBoost with LR = 0.002, Depth = 50..."
+                        sh '''
+                        source venv/bin/activate
+                        python src/model.py --lr 0.002 --depth 50
+                        '''
+                    }
+                }
+                stage('Train Model - LR = 0.0002, Depth = 10'){
+                    steps{
+                        echo "Training XGBoost with LR = 0.0002, Depth = 10..."
+                        sh '''
+                        source venv/bin/activate
+                        python src/model.py --lr 0.0002 --depth 10
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Select BEst model'){
+            echo "Selecting best model..."
+            sh '''
+            source venv/bin/activate
+            python src/model_selection.py
+            '''
+        }
+        stage('Build Docker Image'){
+            steps{
+                echo "Deploying the Flask API..."
+                sh '''
+                docker run -d -f 5000:5000 ${DOCKER_IMAGE}
+                '''
+            }
+        }
+    }
+    post{
+        success{
+            echo "Hyperparameter Tuning pipeline completed successfully..."
+        }
+        failure{
+            echo "Pipeline Failed. Check logs for error"
+        }
+    }
+}
