@@ -18,7 +18,7 @@ pipeline {
                 echo "Setting up Python Environment..."
                 sh '''
                 python3 -m venv venv
-                source venv/bin/activate
+                . venv/bin/activate
                 pip install --upgrade pip 
                 pip install -r config/requirements.txt
                 '''
@@ -30,7 +30,7 @@ pipeline {
                     steps{
                         echo "Training XGBoost with LR = 0.02, Depth = 100..."
                         sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         python src/model.py --lr 0.02 --depth 100
                         '''
                     }
@@ -39,7 +39,7 @@ pipeline {
                     steps{
                         echo "Training XGBoost with LR = 0.002, Depth = 50..."
                         sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         python src/model.py --lr 0.002 --depth 50
                         '''
                     }
@@ -48,7 +48,7 @@ pipeline {
                     steps{
                         echo "Training XGBoost with LR = 0.0002, Depth = 10..."
                         sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         python src/model.py --lr 0.0002 --depth 10
                         '''
                     }
@@ -59,7 +59,7 @@ pipeline {
             steps{
                 echo "Selecting best model..."
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 python src/model_selection.py
                 '''
             }
