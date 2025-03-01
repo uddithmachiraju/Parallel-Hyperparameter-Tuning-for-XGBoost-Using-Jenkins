@@ -6,7 +6,7 @@ It trains multiple models with different hyperparameters **simultaneously**, sel
 ---
 
 ## 📂 Project Structure
-
+```
 Parallel_Hyperparameter_Tuning/ 
 │── .jenkins/                      # Jenkins pipeline setup
 │   ├── Jenkinsfile                # Jenkins CI/CD pipeline script
@@ -23,6 +23,7 @@ Parallel_Hyperparameter_Tuning/
 │   ├── test_xgb.py                # Tests model selection logic
 │── README.md                      # Project documentation
 |── .gitignore                     # Git Ignore Files 
+```
 
 ## ⚡ Features
 **Parallel hyperparameter tuning** using Jenkins  
